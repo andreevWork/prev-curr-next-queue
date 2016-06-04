@@ -4,14 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "webpack --config webpack.test.config.js --progress && node_modules/karma/bin/karma start",
+    "test-compile": "webpack --config webpack.test.config.js --progress --watch",
+    "production": "webpack --config webpack.production.config.js -p"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-typescript": "^2.13.6"
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-jasmine": "^1.0.2",
+    "ts-loader": "^0.8.2",
+    "typescript": "^1.8.10"
   }
 }
