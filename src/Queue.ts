@@ -32,11 +32,15 @@ export default class Queue<T> implements IQueue<T> {
     }
 
     getAvailability(): number{
-        return this.isEnough() ? 0 : (this.count - (this.range.to + this.getNext().length));
+        return this.isEnd() ? 0 : (this.count - (this.range.to + this.getNext().length));
     }
 
-    isEnough(): boolean {
+    isEnd(): boolean {
         return (this.range.to + this.getNext().length) >= this.count ? true : false;
+    }
+
+    isStart(): boolean {
+        return (this.range.from - this.getPrev().length) === 1  ? true : false;
     }
 
     moveForward(): T[] {
@@ -61,6 +65,10 @@ export default class Queue<T> implements IQueue<T> {
 
     setPrevPiece(piece: T[]): void {
         this.pieceIsValid(piece);
+
+        if(this.isStart()){
+            throw Error('queue already in position start');
+        }
         
         if(this.isEmpty(this.queue.prev)){
             this.queue.prev = piece;
@@ -83,6 +91,10 @@ export default class Queue<T> implements IQueue<T> {
 
     getActualRange(): IRangeObject {
         return this.range;
+    }
+
+    setActualRange(range: IRangeObject): void {
+        this.range = range;
     }
 
     private pieceIsValid(piece: T[]): void {
@@ -117,17 +129,17 @@ export default class Queue<T> implements IQueue<T> {
             this.queue.actual = new_actual;
             this.queue.next = new_next;
 
-            this.setRange(new_next.length, true);
+            this.setRange(new_next.length, true, new_actual.length);
         }
     }
 
-    private setRange(len: number, back: boolean = false): void {
+    private setRange(len: number, back: boolean = false, prev_len?: number): void {
         if(!this.range.to) {
             this.range.to = len;
         } else {
             if(back){
                 this.range.to -= len;
-                this.range.from -= this.range.to;
+                this.range.from -= prev_len;
             } else {
                 this.range.from = this.range.to + 1;
                 this.range.to += len;

@@ -6,11 +6,13 @@ export interface IQueue<T> {
     getPrev(): T[];
     getActual(): T[];
     getNext(): T[];
-    isEnough(): boolean;
+    isEnd(): boolean;
+    isStart(): boolean;
     getAvailability(): number;
     getActualRange(): IRangeObject;
     setPiece(piece: T[]): void;
     setPrevPiece(piece: T[]): void;
+    setActualRange(range: IRangeObject): void;
     moveForward(): T[];
     moveBack(): T[];
 }

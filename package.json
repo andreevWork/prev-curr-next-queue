@@ -1,16 +1,16 @@
 {
-  "name": "test",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "triple-queue",
+  "version": "1.1.0",
+  "description": "simple triple queue",
+  "main": "dist/queue.js",
   "scripts": {
     "test": "webpack --config webpack.test.config.js --progress && node_modules/karma/bin/karma start",
     "test-compile": "webpack --config webpack.test.config.js --progress --watch",
     "production": "webpack --config webpack.production.config.js -p"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["queue", "stack"],
+  "author": "Andreev Vladimir",
+  "license": "MIT",
   "devDependencies": {
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.22",

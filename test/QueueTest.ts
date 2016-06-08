@@ -150,6 +150,25 @@ describe('queue tests', () => {
 		expect(queue.getActualRange()).toEqual({from, to});
 	});
 
+	it("Есть возможность явно указать первые значения для диапозонов, продолжит считать", () => {
+		var piece_1 = [1, 2, 3, 4, 5],
+			piece_2 = [10, 20, 30],
+			piece_3 = [10, 20, 30, 40],
+			piece_4 = [10, 20, 30, 40, 8],
+			from = 11,
+			to = 15,
+			size = 5;
+
+		queue.setSize(size);
+
+		queue.setActualRange({from, to});
+		expect(queue.getActualRange()).toEqual({from, to});
+
+		queue.setPiece(piece_1);
+
+		expect(queue.getActualRange()).toEqual({from: from + piece_1.length, to: to + piece_1.length});
+	});
+
 	it("Если установить общий размер count, и записать меньше объектов, должен показывать что в очереди есть место", () => {
 		var piece_1 = [1, 2, 3, 4, 5],
 			piece_2 = [10, 20, 30],
@@ -162,8 +181,10 @@ describe('queue tests', () => {
 		queue.setPiece(piece_1);
 		queue.setPiece(piece_2);
 		queue.setPiece(piece_3);
+		queue.setPiece(piece_2);
 
-		expect(queue.isEnough()).toBeFalsy();
+		expect(queue.isEnd()).toBeFalsy();
+		expect(queue.isStart()).toBeFalsy();
 	});
 
 
@@ -178,7 +199,58 @@ describe('queue tests', () => {
 		queue.setPiece(piece_1);
 		queue.setPiece(piece_2);
 		
-		expect(queue.isEnough()).toBeTruthy();
+		expect(queue.isEnd()).toBeTruthy();
+	});
+
+	it("Если вернулись обратно в начало очереди, isStart вернет true", () => {
+		var piece_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+			piece_2 = [10, 20, 30, 40, 50],
+			count = 15,
+			size = 10;
+
+		queue.setSize(size);
+		queue.setCount(count);
+		queue.setPiece(piece_1);
+		queue.setPiece(piece_2);
+
+		expect(queue.isStart()).toBeTruthy();
+	});
+
+
+	it("Общий тест для флагов isStart и isEnd", () => {
+		var piece_1 = [1, 2, 3, 4, 5],
+			piece_2 = [10, 20, 30],
+			piece_3 = [10, 13, 30, 89, 50],
+			piece_4 = [10, 20, 48, 50],
+			piece_5 = [10, 20, 5],
+			count = 20,
+			size = 5;
+
+		queue.setSize(size);
+		queue.setCount(count);
+		queue.setPiece(piece_1);
+		queue.setPiece(piece_2);
+
+		expect(queue.isStart()).toBeTruthy();
+		expect(queue.isEnd()).toBeFalsy();
+
+		queue.setPiece(piece_3);
+		queue.setPiece(piece_4);
+		queue.setPiece(piece_5);
+
+		expect(queue.isStart()).toBeFalsy();
+		expect(queue.isEnd()).toBeTruthy();
+
+		queue.moveBack();
+		queue.setPrevPiece(piece_2);
+
+		expect(queue.isStart()).toBeFalsy();
+		expect(queue.isEnd()).toBeFalsy();
+
+		queue.moveBack();
+		queue.setPrevPiece(piece_1);
+		expect(queue.isStart()).toBeTruthy();
+		expect(queue.isEnd()).toBeFalsy();
 	});
 
 	it("Если установить общий размер count, вернет число доступных мест в очереди", () => {
@@ -241,7 +313,7 @@ describe('queue tests', () => {
 		queue.setPiece(piece_1);
 		queue.setPiece(piece_2);
 		queue.setPiece(piece_3);
-
+		
 		expect(queue.moveBack()).toEqual(piece_3);
 		expect(queue.getPrev()).toEqual([]);
 		expect(queue.getActual()).toEqual(piece_1);
@@ -291,5 +363,23 @@ describe('queue tests', () => {
 		expect(queue.getActual()).toEqual(piece_3);
 		expect(queue.getNext()).toEqual(piece_after);
 		expect(queue.getActualRange()).toEqual({from, to});
+	});
+
+	it("Если prev пустой, но мы уже на старте очереди, вылетает ошибка", () => {
+		var piece_1 = [1, 2, 3, 4, 5, 6, 7, 8],
+			piece_2 = [10, 20],
+			piece_3 = [10, 20, 30, 40],
+			piece_after = [1111],
+			size = 10;
+
+		queue.setSize(size);
+		queue.setPiece(piece_1);
+		queue.setPiece(piece_2);
+		queue.setPiece(piece_3);
+
+		queue.moveBack();
+
+
+		expect(() => queue.setPrevPiece(piece_after)).toThrowError();
 	});
 });
