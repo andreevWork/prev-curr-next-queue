@@ -1,6 +1,6 @@
 {
   "name": "triple-queue",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "simple triple queue",
   "main": "dist/queue.js",
   "scripts": {
@@ -8,7 +8,10 @@
     "test-compile": "webpack --config webpack.test.config.js --progress --watch",
     "production": "webpack --config webpack.production.config.js -p"
   },
-  "keywords": ["queue", "stack"],
+  "keywords": [
+    "queue",
+    "stack"
+  ],
   "author": "Andreev Vladimir",
   "license": "MIT",
   "devDependencies": {
